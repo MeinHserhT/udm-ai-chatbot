@@ -2,7 +2,7 @@ import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
 
 const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GOOGLE_API_KEY });
 
-export class Gemini {
+export class Assistant {
     #chat;
     constructor(model: string = "gemini-2.5-flash") {
         this.#chat = ai.chats.create({ model: model, });
