@@ -12,7 +12,14 @@ function App() {
 	const assistant = new Assistant();
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
+	const [isStreaming, setIsStreaming] = useState(false);
 
+	function updateLastMessageContent(content: string) {
+		setMessages((prevMessages) => prevMessages.map((message, index) =>
+			index === prevMessages.length - 1
+				? { ...message, content: `${message.content}${content}` }
+				: message));
+	}
 
 	function addMessage(message: Message) {
 		setMessages((prevMessages) => [...prevMessages, message]);
@@ -22,16 +29,32 @@ function App() {
 		addMessage({ content: content, role: "user" });
 		setIsLoading(true);
 		try {
-			const result: string = await assistant.chat(content);
-			addMessage({ content: result, role: "model" })
+			const result = await assistant.chatStream(content);
+			let isFirstChunk: boolean = false;
+
+			for await (const chunk of result) {
+				if (!isFirstChunk) {
+					isFirstChunk = true;
+					addMessage({ content: "", role: "model" });
+					setIsLoading(true);
+					setIsStreaming(true);
+				}
+				else {
+					setIsLoading(false);
+				}
+				if (chunk) {
+					updateLastMessageContent(chunk);
+				}
+			}
+			setIsStreaming(false);
 		} catch (error) {
 			console.log(error);
 			addMessage({
 				content: "Sorry, I'm having trouble right now. Please try again later.",
 				role: "model",
 			})
-		} finally {
 			setIsLoading(false);
+			setIsStreaming(false);
 		}
 	}
 
@@ -39,13 +62,13 @@ function App() {
 		<div className={styles.App}>
 			{isLoading && <Loader />}
 			<header className={styles.Header}>
-				<img className={styles.Logo} src="/chat-bot.png" />
+				<img className={styles.Logo} src="/icon_light.png" />
 				<h2 className={styles.Title}>AI Chatbot</h2>
 			</header>
 			<div className={styles.ChatContainer}>
 				<Chat messages={messages} />
 			</div>
-			<Controls onSend={handleContentSend} />
+			<Controls isDisabled={isLoading || isStreaming} onSend={handleContentSend} />
 		</div>
 	);
 }
