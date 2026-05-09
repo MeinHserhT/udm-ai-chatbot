@@ -16,6 +16,7 @@
   width: 265px;
   flex-shrink: 0;
   transition: width 0.3s ease-in-out;
+  overflow-x: hidden;
 }
 
 .NavbarCollapsed {
@@ -25,6 +26,13 @@
 .Logo {
   width: 265px;
   object-fit: cover;
+  transition: width 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  opacity: 1;
+}
+
+.NavbarCollapsed .Logo {
+  width: 0;
+  opacity: 0;
 }
 
 .Setting {
@@ -36,10 +44,49 @@
 }
 
 .Setting button {
-  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #c1c1c1;
   border: none;
-  color: #b3b3b3;
-  transition: color 0.3s;
+  color: #000000;
+  transition: color 0.3s, transform 0.1s, background-color 0.1s, width 0.3s ease-in-out;
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 0 8px;
+  width: 200px;
+  white-space: nowrap;
+}
+
+.Setting button:active {
+    transform: scale(0.95);
+    background-color: #a1a1a1;
+}
+
+.NavbarCollapsed .Setting button {
+    width: 44px; /* 28px icon + 2*8px padding */
+}
+
+.Setting button img {
+  width: 28px;
+  height: 28px;
+  margin-right: 8px;
+  transition: margin-right 0.3s ease-in-out;
+}
+
+.NavbarCollapsed .Setting button img {
+    margin-right: 0;
+}
+
+.Setting button p {
+    transition: opacity 0.2s;
+    opacity: 1;
+}
+
+.NavbarCollapsed .Setting button p {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
 }
 
 .Main {

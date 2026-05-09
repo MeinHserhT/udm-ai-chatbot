@@ -14,11 +14,15 @@ function App() {
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isStreaming, setIsStreaming] = useState(false);
-    const [isNavCollapsed, setIsNavCollapsed] = useState(false);
+	const [isNavCollapsed, setIsNavCollapsed] = useState(false);
 
-    function toggleNav() {
-        setIsNavCollapsed(prevState => !prevState);
-    }
+	function toggleNav() {
+		setIsNavCollapsed(prevState => !prevState);
+	}
+
+	function clearChat() {
+		setMessages([]);
+	}
 
 	function updateLastMessageContent(content: string) {
 		setMessages((prevMessages) => prevMessages.map((message, index) =>
@@ -69,12 +73,18 @@ function App() {
 		<div className={styles.App} >
 			{isLoading && <Loader />}
 			<div className={`${styles.Navbar} ${isNavCollapsed ? styles.NavbarCollapsed : ''}`} >
-                <MenuIcon onClick={toggleNav} />
-				{!isNavCollapsed && <img className={styles.Logo} src="/Logo.png" />}
-				{!isNavCollapsed && <div className={styles.Setting}>
-					<button >New Chat</button>
-					<button >Settings</button>
-				</div>}
+				<MenuIcon onClick={toggleNav} />
+				<img className={styles.Logo} src="/logo.png" />
+				<div className={styles.Setting}>
+					<button onClick={clearChat} >
+						<img src="/plus.png" />
+						<p>New Chat</p>
+					</button>
+					<button >
+						<img src="/settings.png"/>
+						<p>Settings</p>
+					</button>
+				</div>
 
 			</div>
 			<div className={styles.Main}>
