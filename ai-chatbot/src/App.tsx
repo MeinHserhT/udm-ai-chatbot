@@ -6,6 +6,7 @@ import { Chat } from "./components/Chat/Chat";
 import { Loader } from "./components/Loader/Loader";
 import { Controls } from "./components/Controls/Controls";
 import type { Message } from "./components/Message";
+import { MenuIcon } from "./components/MenuIcon/MenuIcon";
 
 
 function App() {
@@ -13,6 +14,11 @@ function App() {
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
 	const [isStreaming, setIsStreaming] = useState(false);
+    const [isNavCollapsed, setIsNavCollapsed] = useState(false);
+
+    function toggleNav() {
+        setIsNavCollapsed(prevState => !prevState);
+    }
 
 	function updateLastMessageContent(content: string) {
 		setMessages((prevMessages) => prevMessages.map((message, index) =>
@@ -46,6 +52,7 @@ function App() {
 					updateLastMessageContent(chunk);
 				}
 			}
+			setIsLoading(false);
 			setIsStreaming(false);
 		} catch (error) {
 			console.log(error);
@@ -59,16 +66,23 @@ function App() {
 	}
 
 	return (
-		<div className={styles.App}>
+		<div className={styles.App} >
 			{isLoading && <Loader />}
-			<header className={styles.Header}>
-				<img className={styles.Logo} src="/icon_light.png" />
-				<h2 className={styles.Title}>AI Chatbot</h2>
-			</header>
-			<div className={styles.ChatContainer}>
-				<Chat messages={messages} />
+			<div className={`${styles.Navbar} ${isNavCollapsed ? styles.NavbarCollapsed : ''}`} >
+                <MenuIcon onClick={toggleNav} />
+				{!isNavCollapsed && <img className={styles.Logo} src="/Logo.png" />}
+				{!isNavCollapsed && <div className={styles.Setting}>
+					<button >New Chat</button>
+					<button >Settings</button>
+				</div>}
+
 			</div>
-			<Controls isDisabled={isLoading || isStreaming} onSend={handleContentSend} />
+			<div className={styles.Main}>
+				<div className={styles.ChatContainer}>
+					<Chat messages={messages} />
+				</div>
+				<Controls isDisabled={isLoading || isStreaming} onSend={handleContentSend} />
+			</div>
 		</div>
 	);
 }

@@ -1,28 +1,59 @@
 .App {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
   height: 100vh;
-  padding: 16px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.Header {
-  text-align: center;
+.Navbar {
+  height: 100%;
+  background-color: #1a1a1a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+  box-sizing: border-box;
+  width: 265px;
+  flex-shrink: 0;
+  transition: width 0.3s ease-in-out;
+}
+
+.NavbarCollapsed {
+    width: 80px;
 }
 
 .Logo {
-  width: 64px;
-  height: 64px;
+  width: 265px;
+  object-fit: cover;
 }
 
-.Title {
-  margin: 0;
+.Setting {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.Setting button {
+  background: transparent;
+  border: none;
+  color: #b3b3b3;
+  transition: color 0.3s;
+}
+
+.Main {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: 16px;
+  padding: 16px;
+  box-sizing: border-box;
 }
 
 .ChatContainer {
   flex-grow: 1;
-  width: 100%;
   background: light-dark(#ffffff, #212121);
   border-radius: 16px;
   overflow-y: auto;
