@@ -1,104 +1,22 @@
-import { useState } from "react";
-import styles from "./App.module.css";
-import { Assistant } from './assistants/Gemini';
-// import { Assistant } from './assistants/ChatGPT';
-import { Chat } from "./components/Chat/Chat";
-import { Controls } from "./components/Controls/Controls";
-import type { Message } from "./components/Message";
-import { MenuIcon } from "./components/MenuIcon/MenuIcon";
-import { Loader } from "./components/Loader/Loader";
-import { Start } from "./components/Start/Start";
+import styles from './App.module.css';
+import { useChat } from './hooks/useChat';
+import { Navbar } from './components/Navbar/Navbar';
+import { ChatWindow } from './components/ChatWindow/ChatWindow';
 
 function App() {
-	const assistant = new Assistant();
-	const [messages, setMessages] = useState<Message[]>([]);
-	const [isLoading, setIsLoading] = useState(false);
-	const [isStreaming, setIsStreaming] = useState(false);
-	const [isNavCollapsed, setIsNavCollapsed] = useState(false);
+  const { messages, isLoading, isStreaming, sendMessage, clearChat } = useChat();
 
-	function toggleNav() {
-		setIsNavCollapsed(prevState => !prevState);
-	}
-
-	function clearChat() {
-		setMessages([]);
-	}
-
-	function updateLastMessageContent(content: string) {
-		setMessages((prevMessages) => prevMessages.map((message, index) =>
-			index === prevMessages.length - 1
-				? { ...message, content: `${message.content}${content}` }
-				: message));
-	}
-
-	function addMessage(message: Message) {
-		setMessages((prevMessages) => [...prevMessages, message]);
-	}
-
-	async function handleContentSend(content: string) {
-		addMessage({ content: content, role: "user" });
-		setIsLoading(true);
-		try {
-			const result = await assistant.chatStream(content);
-			let isFirstChunk: boolean = false;
-
-			for await (const chunk of result) {
-				if (!isFirstChunk) {
-					isFirstChunk = true;
-					addMessage({ content: "", role: "model" });
-					setIsLoading(true);
-					setIsStreaming(true);
-				}
-				else {
-					setIsLoading(false);
-				}
-				if (chunk) {
-					updateLastMessageContent(chunk);
-				}
-			}
-			setIsLoading(false);
-			setIsStreaming(false);
-		} catch (error) {
-			console.log(error);
-			addMessage({
-				content: "Sorry, I'm having trouble right now. Please try again later.",
-				role: "model",
-			})
-			setIsLoading(false);
-			setIsStreaming(false);
-		}
-	}
-
-	return (
-		<div className={styles.App} >
-			<div className={`${styles.Navbar} ${isNavCollapsed ? styles.NavbarCollapsed : ''}`} >
-				<MenuIcon onClick={toggleNav} />
-				<img className={styles.Logo} src="/logo.png" />
-				<div className={styles.Setting}>
-					<button onClick={clearChat} >
-						<img src="/plus.png" />
-						<p>New Chat</p>
-					</button>
-					<button >
-						<img src="/settings.png"/>
-						<p>Settings</p>
-					</button>
-				</div>
-
-			</div>
-			<div className={styles.Main}>
-				{isLoading && <Loader />}
-				<div className={styles.ChatContainer}>
-					{messages.length === 0 ? (
-						<Start onPromptClick={handleContentSend} />
-					) : (
-						<Chat messages={messages} />
-					)}
-				</div>
-				<Controls isDisabled={isLoading || isStreaming} onSend={handleContentSend} />
-			</div>
-		</div>
-	);
+  return (
+    <div className={styles.App}>
+      <Navbar clearChat={clearChat} />
+      <ChatWindow
+        messages={messages}
+        isLoading={isLoading}
+        isStreaming={isStreaming}
+        sendMessage={sendMessage}
+      />
+    </div>
+  );
 }
 
 export default App;

@@ -3,7 +3,7 @@ import styles from './Controls.module.css';
 import TextareaAutosize from "react-textarea-autosize";
 
 export function Controls({ isDisabled = false, onSend }: { isDisabled: boolean, onSend: (content: string) => void }) {
-    const textAreaRef = useRef(null);
+    const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const [content, setContent] = useState('');
 
     useEffect(() => {

@@ -8,16 +8,16 @@ export class Assistant {
         this.#chat = ai.chats.create({ model: model, });
     }
 
-    async chat(content: string) {
+    async chat(content: string): Promise<string> {
         const result: GenerateContentResponse = await this.#chat.sendMessage({ message: content });
         return result.text ?? "";
     }
 
-    async *chatStream(content: string) {
+    async *chatStream(content: string): AsyncGenerator<string, void, undefined> {
         const result = await this.#chat.sendMessageStream({ message: content });
 
         for await (const chunk of result) {
-            yield chunk.text;
+            yield chunk.text ?? "";
         }
     }
 }

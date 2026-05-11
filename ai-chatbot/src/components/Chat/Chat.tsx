@@ -15,14 +15,16 @@ export function Chat({ messages }: { messages: Message[] }) {
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 	const messagesGroups = useMemo(() =>
 		messages.reduce((groups: Message[][], message: Message) => {
-			if (message.role === "user") groups.push([]);
-			groups[groups.length - 1].push(message);
+			if (message.role === "user" || groups.length === 0) {
+				groups.push([]);
+			}
+			groups[groups.length - 1]!.push(message);
 			return groups;
-		}, [])
+		}, [] as Message[][])
 		, [messages])
 
 	useEffect(() => {
-		const lastMessage: Message = messages[messages.length - 1];
+		const lastMessage: Message | undefined = messages[messages.length - 1];
 
 		if (lastMessage?.role === 'user') {
 			messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
