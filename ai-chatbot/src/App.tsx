@@ -3,11 +3,11 @@ import styles from "./App.module.css";
 import { Assistant } from './assistants/Gemini';
 // import { Assistant } from './assistants/ChatGPT';
 import { Chat } from "./components/Chat/Chat";
-import { Loader } from "./components/Loader/Loader";
 import { Controls } from "./components/Controls/Controls";
 import type { Message } from "./components/Message";
 import { MenuIcon } from "./components/MenuIcon/MenuIcon";
-
+import { Loader } from "./components/Loader/Loader";
+import { Start } from "./components/Start/Start";
 
 function App() {
 	const assistant = new Assistant();
@@ -71,7 +71,6 @@ function App() {
 
 	return (
 		<div className={styles.App} >
-			{isLoading && <Loader />}
 			<div className={`${styles.Navbar} ${isNavCollapsed ? styles.NavbarCollapsed : ''}`} >
 				<MenuIcon onClick={toggleNav} />
 				<img className={styles.Logo} src="/logo.png" />
@@ -88,8 +87,13 @@ function App() {
 
 			</div>
 			<div className={styles.Main}>
+				{isLoading && <Loader />}
 				<div className={styles.ChatContainer}>
-					<Chat messages={messages} />
+					{messages.length === 0 ? (
+						<Start onPromptClick={handleContentSend} />
+					) : (
+						<Chat messages={messages} />
+					)}
 				</div>
 				<Controls isDisabled={isLoading || isStreaming} onSend={handleContentSend} />
 			</div>

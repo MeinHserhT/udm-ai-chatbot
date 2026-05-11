@@ -1,0 +1,35 @@
+.Start {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.Welcome {
+    font-size: 2em;
+    margin-bottom: 2em;
+    max-width: 80%;
+    text-align: center;
+}
+
+.Prompts {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1em;
+    max-width: 80%;
+}
+
+.Prompt {
+    background: light-dark(#f0f0f0, #333);
+    border: 1px solid light-dark(#ddd, #444);
+    border-radius: 0.5em;
+    padding: 1em;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.Prompt:hover {
+    background: light-dark(#e0e0e0, #444);
+}
