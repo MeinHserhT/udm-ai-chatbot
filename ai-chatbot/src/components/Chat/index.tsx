@@ -1,11 +1,11 @@
 import { useEffect, useRef, useMemo } from "react";
 import styles from "./Chat.module.css";
 import Markdown from "react-markdown";
-import type { Message } from "../Message";
+import type { Message } from "../../types/messages";
 
-const WELCOME_MESSAGE_GROUP: { role: string, content: string }[] = [
+const WELCOME_MESSAGE_GROUP: Message[] = [
 	{
-		role: "assistant",
+		role: "model",
 		content: "Hello! How can I assist you today?",
 	},
 ];

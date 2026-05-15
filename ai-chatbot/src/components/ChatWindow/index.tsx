@@ -1,8 +1,8 @@
-import { Chat } from '../Chat/Chat';
-import { Start } from '../Start/Start';
-import { Controls } from '../Controls/Controls';
-import { Loader } from '../Loader/Loader';
-import type { Message } from '../Message';
+import { Chat } from '../Chat';
+import { Start } from '../Start';
+import { Controls } from '../Controls';
+import { Loader } from '../Loader';
+import type { Message } from '../../types/messages';
 import styles from './ChatWindow.module.css';
 
 interface ChatWindowProps {
