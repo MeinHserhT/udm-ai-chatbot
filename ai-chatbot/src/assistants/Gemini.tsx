@@ -12,12 +12,12 @@ export class Gemini {
   #chat;
 
   constructor() {
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
     this.#chat = model.startChat();
   }
 
   // 2. Use an arrow function to preserve 'this' context if passed as a callback
-  chatStream = async function* (content: string) {
+  chatStream = async function* (this: Gemini, content: string) {
     try {
       const result = await this.#chat.sendMessageStream(content);
 
