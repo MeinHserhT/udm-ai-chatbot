@@ -1,25 +1,26 @@
 .Navbar {
   height: 100%;
-  background-color: #1a1a1a;
+  background-color: var(--bg-sidebar);
+  border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px 0;
-  box-sizing: border-box;
-  width: 265px;
+  padding: 24px 0;
+  width: 280px;
   flex-shrink: 0;
-  transition: width 0.3s ease-in-out;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   overflow-x: hidden;
 }
 
 .NavbarCollapsed {
-    width: 80px;
+  width: 72px;
 }
 
 .Logo {
-  width: 265px;
-  object-fit: cover;
-  transition: width 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  width: 200px;
+  object-fit: contain;
+  margin-bottom: 32px;
+  transition: width 0.3s ease, opacity 0.3s ease;
   opacity: 1;
 }
 
@@ -33,51 +34,74 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  width: 100%;
+  padding: 0 16px;
 }
 
 .Setting button {
   display: flex;
   align-items: center;
-  justify-content: center;
-  background: #c1c1c1;
-  border: none;
-  color: #000000;
-  transition: color 0.3s, transform 0.1s, background-color 0.1s, width 0.3s ease-in-out;
+  justify-content: flex-start;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  border-radius: 12px;
+  padding: 12px 16px;
+  width: 100%;
+  font-family: var(--font-family);
+  font-weight: 500;
+  font-size: 14px;
   cursor: pointer;
-  border-radius: 6px;
-  padding: 0 8px;
-  width: 200px;
+  transition: all 0.2s ease;
   white-space: nowrap;
 }
 
+.Setting button:hover {
+  background: var(--bg-input);
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+  transform: translateY(-1px);
+}
+
 .Setting button:active {
-    transform: scale(0.95);
-    background-color: #a1a1a1;
+  transform: translateY(1px);
+}
+
+.NavbarCollapsed .Setting {
+  padding: 0 8px;
 }
 
 .NavbarCollapsed .Setting button {
-    width: 44px; /* 28px icon + 2*8px padding */
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  justify-content: center;
 }
 
 .Setting button img {
-  width: 28px;
-  height: 28px;
-  margin-right: 8px;
-  transition: margin-right 0.3s ease-in-out;
+  width: 20px;
+  height: 20px;
+  margin-right: 12px;
+  filter: invert(1); /* Assuming original icons are black */
+  transition: margin 0.3s ease;
+}
+
+.Setting button:hover img {
+  filter: invert(0.7) sepia(1) saturate(500%) hue-rotate(150deg); /* Neon blue tint on hover */
 }
 
 .NavbarCollapsed .Setting button img {
-    margin-right: 0;
+  margin-right: 0;
 }
 
 .Setting button p {
-    transition: opacity 0.2s;
-    opacity: 1;
+  margin: 0;
+  transition: opacity 0.2s;
 }
 
 .NavbarCollapsed .Setting button p {
-    opacity: 0;
-    width: 0;
-    overflow: hidden;
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
 }

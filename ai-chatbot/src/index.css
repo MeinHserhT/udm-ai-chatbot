@@ -1,15 +1,30 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  /* Modern Dark Theme Color Palette */
+  --bg-main: #1A1C23;        /* Deep slate gray for main window */
+  --bg-sidebar: #131419;     /* Darker slate for sidebar */
+  --bg-input: #242730;       /* Lighter slate for input field */
+  --bg-bubble-ai: #242730;   /* AI message background */
+  --bg-bubble-user: #00D4FF; /* Neon blue for user messages */
+  
+  --text-main: #F3F4F6;
+  --text-muted: #9CA3AF;
+  --text-inverse: #000000;   /* For text on neon blue */
+  
+  --accent-blue: #00D4FF;
+  --accent-blue-hover: #00BBE6;
+  --border-color: #2D3039;
+  
+  --font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
 
-  color-scheme: light dark;
-  color: light-dark(#0d0d0d, #cecece);
-  background: light-dark(#f3f3f3, #171717);
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-family);
+  background-color: var(--bg-main);
+  color: var(--text-main);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -18,7 +33,17 @@
   box-sizing: border-box;
 }
 
-body {
-  min-height: 100vh;
-  margin: 0;
+/* Custom Scrollbar for a sleek look */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
 }

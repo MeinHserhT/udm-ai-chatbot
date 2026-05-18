@@ -1,39 +1,49 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import TextareaAutosize from 'react-textarea-autosize';
 import styles from './Controls.module.css';
-import TextareaAutosize from "react-textarea-autosize";
 
-export function Controls({ isDisabled = false, onSend }: { isDisabled: boolean, onSend: (content: string) => void }) {
+interface ControlsProps {
+    isDisabled?: boolean;
+    onSend: (content: string) => void;
+}
+
+export const Controls: React.FC<ControlsProps> = ({ isDisabled = false, onSend }) => {
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
-    const [content, setContent] = useState('');
+    const [content, setContent] = useState<string>('');
 
     useEffect(() => {
         if (!isDisabled) {
             textAreaRef.current?.focus();
         }
-    }, [isDisabled])
+    }, [isDisabled]);
 
-    function handleContentChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
+    const handleContentChange = useCallback((event: React.ChangeEvent<HTMLTextAreaElement>) => {
         setContent(event.target.value);
-    }
+    }, []);
 
-    function handleContentSend() {
-        if (content.length > 0) {
-            onSend(content);
+    const handleContentSend = useCallback(() => {
+        const trimmedContent = content.trim();
+        if (trimmedContent.length > 0) {
+            onSend(trimmedContent);
             setContent('');
         }
-    }
+    }, [content, onSend]);
 
-    function handleEnterPress(event: React.KeyboardEvent<HTMLTextAreaElement>) {
-        if (event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault();
-            handleContentSend();
-        }
-    }
+    const handleEnterPress = useCallback(
+        (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                handleContentSend();
+            }
+        },
+        [handleContentSend]
+    );
 
     return (
         <div className={styles.Controls}>
             <div className={styles.TextAreaContainer}>
-                <TextareaAutosize className={styles.TextArea}
+                <TextareaAutosize
+                    className={styles.TextArea}
                     ref={textAreaRef}
                     placeholder="Type a message..."
                     value={content}
@@ -41,13 +51,18 @@ export function Controls({ isDisabled = false, onSend }: { isDisabled: boolean, 
                     maxRows={4}
                     disabled={isDisabled}
                     onChange={handleContentChange}
-                    onKeyDown={handleEnterPress} />
+                    onKeyDown={handleEnterPress}
+                />
             </div>
-            <button className={styles.Button}
-                disabled={isDisabled}
-                onClick={handleContentSend}>
-                <img src='./send.png' />
+            <button
+                type="button"
+                className={styles.Button}
+                disabled={isDisabled || content.trim().length === 0}
+                onClick={handleContentSend}
+                aria-label="Send message"
+            >
+                <img src="/send.png" alt="Send" />
             </button>
         </div>
     );
-}
+};

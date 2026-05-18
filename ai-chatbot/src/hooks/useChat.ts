@@ -1,54 +1,68 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { createAssistant } from '../assistants/factory';
 import type { Message } from '../types/messages';
 import type { AssistantId } from '../types/assistants';
 
-export function useChat() {
+export const useChat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isStreaming, setIsStreaming] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isStreaming, setIsStreaming] = useState<boolean>(false);
   const [assistantId, setAssistantId] = useState<AssistantId>('gemini');
 
-  const assistant = createAssistant(assistantId);
+  const clearChat = useCallback(() => setMessages([]), []);
 
-  const clearChat = () => setMessages([]);
-
-  const sendMessage = async (content: string) => {
-    const userMessage: Message = { content, role: 'user' };
-    setMessages((prevMessages) => [...prevMessages, userMessage]);
-    setIsLoading(true);
+  const streamMessage = useCallback(async (content: string, assistant: ReturnType<typeof createAssistant>) => {
+    setIsStreaming(true);
+    setMessages((prev) => [...prev, { content: '', role: 'model' }]);
 
     try {
-      await streamMessage(content);
+      const stream = assistant.chatStream(content);
+      for await (const chunk of stream) {
+        setMessages((prev) => {
+          const newMessages = [...prev];
+          const lastIndex = newMessages.length - 1;
+          const lastMessage = newMessages[lastIndex];
+          
+          if (lastMessage) {
+            newMessages[lastIndex] = { ...lastMessage, content: lastMessage.content + chunk };
+          }
+          return newMessages;
+        });
+      }
     } catch (error) {
-      console.error(error);
-      const errorMessage: Message = {
-        content: "Sorry, I'm having trouble right now. Please try again later.",
-        role: 'model',
-      };
-      setMessages((prevMessages) => [...prevMessages, errorMessage]);
+      console.error("Streaming error:", error);
+      setMessages((prev) => [
+        ...prev,
+        { content: "Sorry, I'm having trouble right now. Please try again later.", role: 'model' },
+      ]);
     } finally {
-      setIsLoading(false);
+      setIsStreaming(false);
     }
+  }, []);
+
+  const sendMessage = useCallback(
+    async (content: string) => {
+      const userMessage: Message = { content, role: 'user' };
+      setMessages((prev) => [...prev, userMessage]);
+      setIsLoading(true);
+
+      try {
+        const assistant = createAssistant(assistantId);
+        await streamMessage(content, assistant);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [assistantId, streamMessage]
+  );
+
+  return { 
+    messages, 
+    isLoading, 
+    isStreaming, 
+    sendMessage, 
+    clearChat, 
+    assistantId, 
+    setAssistantId 
   };
-
-  const streamMessage = async (content: string) => {
-    setIsStreaming(true);
-    setMessages((prevMessages) => [...prevMessages, { content: '', role: 'model' }]);
-
-    const stream = assistant.chatStream(content);
-    for await (const chunk of stream) {
-      setMessages((prevMessages) => {
-        const newMessages = [...prevMessages];
-        const lastMessage = newMessages[newMessages.length - 1];
-        if (lastMessage) {
-          newMessages[newMessages.length - 1] = { ...lastMessage, content: lastMessage.content + chunk };
-        }
-        return newMessages;
-      });
-    }
-    setIsStreaming(false);
-  };
-
-  return { messages, isLoading, isStreaming, sendMessage, clearChat, assistantId, setAssistantId };
-}
+};

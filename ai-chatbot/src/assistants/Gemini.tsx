@@ -1,33 +1,30 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenerativeAI } from '@google/generative-ai';
+import type { Assistant } from './types';
 
-// 1. Verify the key is actually loaded
 const apiKey = import.meta.env.VITE_GOOGLE_API_KEY;
 if (!apiKey) {
-  console.error("Missing VITE_GOOGLE_API_KEY environment variable!");
+  console.error('Missing VITE_GOOGLE_API_KEY environment variable!');
 }
 
-const genAI = new GoogleGenerativeAI(apiKey);
+const genAI = new GoogleGenerativeAI(apiKey || '');
 
-export class Gemini {
-  #chat;
+export class Gemini implements Assistant {
+  private chat;
 
   constructor() {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-    this.#chat = model.startChat();
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
+    this.chat = model.startChat();
   }
 
-  // 2. Use an arrow function to preserve 'this' context if passed as a callback
-  chatStream = async function* (this: Gemini, content: string) {
+  public async *chatStream(content: string): AsyncGenerator<string, void, unknown> {
     try {
-      const result = await this.#chat.sendMessageStream(content);
+      const result = await this.chat.sendMessageStream(content);
 
       for await (const chunk of result.stream) {
-        const chunkText = chunk.text();
-        yield chunkText;
+        yield chunk.text();
       }
     } catch (error) {
-      // 3. Catch and log the exact error preventing the connection
-      console.error("Gemini API Connection Error:", error);
+      console.error('Gemini API Connection Error:', error);
       throw error;
     }
   }

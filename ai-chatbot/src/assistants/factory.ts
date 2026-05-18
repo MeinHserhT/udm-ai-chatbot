@@ -1,5 +1,5 @@
 import { Gemini } from './Gemini';
-// import { ChatGPT } from './ChatGPT';
+import { ChatGPT } from './ChatGPT';
 import type { Assistant } from './types';
 import type { AssistantId } from '../types/assistants';
 

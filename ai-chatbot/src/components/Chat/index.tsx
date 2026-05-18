@@ -1,54 +1,51 @@
-import { useEffect, useRef, useMemo } from "react";
-import styles from "./Chat.module.css";
-import Markdown from "react-markdown";
-import type { Message } from "../../types/messages";
+import React, { useEffect, useRef, useMemo } from 'react';
+import Markdown from 'react-markdown';
+import styles from './Chat.module.css';
+import type { Message } from '../../types/messages';
 
 const WELCOME_MESSAGE_GROUP: Message[] = [
 	{
-		role: "model",
-		content: "Hello! How can I assist you today?",
+		role: 'model',
+		content: 'Hello! How can I assist you today?',
 	},
 ];
 
+interface ChatProps {
+	messages: Message[];
+}
 
-export function Chat({ messages }: { messages: Message[] }) {
+export const Chat: React.FC<ChatProps> = ({ messages }) => {
 	const messagesEndRef = useRef<HTMLDivElement>(null);
-	const messagesGroups = useMemo(() =>
-		messages.reduce((groups: Message[][], message: Message) => {
-			if (message.role === "user" || groups.length === 0) {
+
+	const messagesGroups = useMemo(() => {
+		return messages.reduce<Message[][]>((groups, message) => {
+			if (message.role === 'user' || groups.length === 0) {
 				groups.push([]);
 			}
-			groups[groups.length - 1]!.push(message);
+			groups[groups.length - 1].push(message);
 			return groups;
-		}, [] as Message[][])
-		, [messages])
+		}, []);
+	}, [messages]);
 
 	useEffect(() => {
-		const lastMessage: Message | undefined = messages[messages.length - 1];
-
+		const lastMessage = messages[messages.length - 1];
 		if (lastMessage?.role === 'user') {
-			messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+			messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
 		}
 	}, [messages]);
 
-
 	return (
 		<div className={styles.Chat}>
-			{[WELCOME_MESSAGE_GROUP, ...messagesGroups].map(
-				(messages: Message[], groupIndex: number) => (
-					// Group
-					<div key={groupIndex} className={styles.Group}>
-						{messages.map(({ role, content }: Message, index: number) => (
-							// Message
-							<div key={index} className={styles.Message} data-role={role}>
-								<Markdown>{content}</Markdown>
-							</div>
-						))}
-					</div>
-				)
-			)}
-
+			{[WELCOME_MESSAGE_GROUP, ...messagesGroups].map((group, groupIndex) => (
+				<div key={`group-${groupIndex}`} className={styles.Group}>
+					{group.map((msg, index) => (
+						<div key={`msg-${index}`} className={styles.Message} data-role={msg.role}>
+							<Markdown>{msg.content}</Markdown>
+						</div>
+					))}
+				</div>
+			))}
 			<div ref={messagesEndRef} />
 		</div>
 	);
-}
+};

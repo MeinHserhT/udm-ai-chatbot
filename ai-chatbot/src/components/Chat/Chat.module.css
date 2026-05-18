@@ -1,32 +1,49 @@
 .Chat {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 24px;
   height: 100%;
-  padding: 8px;
-  overflow-y: auto;
-}
-
-.Message {
-  width: fit-content;
-  max-width: 90%;
-  padding: 0 16px;
-  border-radius: 16px;
-  font-size: 14px;
-
-  &[data-role="user"] {
-    margin-left: auto;
-    background: light-dark(#f3f3f3, #303030);
-  }
+  padding: 16px 0;
+  max-width: 850px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .Group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
-.Group:nth-last-of-type(2) {
-  /* 8px - gap between groups */
-  min-height: calc(100% - 8px);
+.Message {
+  width: fit-content;
+  max-width: 85%;
+  padding: 14px 20px;
+  font-size: 15px;
+  line-height: 1.6;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* User Message Styling */
+.Message[data-role="user"] {
+  margin-left: auto;
+  background-color: var(--bg-bubble-user);
+  color: var(--text-inverse);
+  border-radius: 20px 20px 4px 20px;
+  font-weight: 500;
+}
+
+/* AI Message Styling */
+.Message[data-role="model"] {
+  margin-right: auto;
+  background-color: var(--bg-bubble-ai);
+  color: var(--text-main);
+  border-radius: 20px 20px 20px 4px;
+  border: 1px solid var(--border-color);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

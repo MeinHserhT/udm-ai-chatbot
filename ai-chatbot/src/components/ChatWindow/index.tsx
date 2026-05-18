@@ -1,3 +1,4 @@
+import React from 'react';
 import { Chat } from '../Chat';
 import { Start } from '../Start';
 import { Controls } from '../Controls';
@@ -12,9 +13,14 @@ interface ChatWindowProps {
   sendMessage: (content: string) => void;
 }
 
-export function ChatWindow({ messages, isLoading, isStreaming, sendMessage }: ChatWindowProps) {
+export const ChatWindow: React.FC<ChatWindowProps> = ({
+  messages,
+  isLoading,
+  isStreaming,
+  sendMessage,
+}) => {
   return (
-    <div className={styles.Main}>
+    <main className={styles.Main}>
       {isLoading && <Loader />}
       <div className={styles.ChatContainer}>
         {messages.length === 0 ? (
@@ -24,6 +30,6 @@ export function ChatWindow({ messages, isLoading, isStreaming, sendMessage }: Ch
         )}
       </div>
       <Controls isDisabled={isLoading || isStreaming} onSend={sendMessage} />
-    </div>
+    </main>
   );
-}
+};
